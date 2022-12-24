@@ -41,11 +41,16 @@ class TMDBMovieScraper(object):
             if 'error' in response:
                 return response
             result = response['results']
-            # get second page if available and if first page doesn't contain an `is_best` result with popularity > 5
-            if response['total_pages'] > 1:
+            total_pages = response['total_pages']
+            # Fetch the second up to fifth page of search results until an `is_best` result with popularity > 5 is found
+            for page in range(2,5):
+                if page > total_pages:
+                    break
                 bests = [item for item in result if is_best(item) and item.get('popularity',0) > 5]
-                if not bests:
-                    response = tmdbapi.search_movie(query=title, year=year, language=self.language, page=2)
+                if bests:
+                    break
+                else:
+                    response = tmdbapi.search_movie(query=title, year=year, language=self.language, page=page)
                     if not 'error' in response:
                         result += response['results']
         urls = self.urls
