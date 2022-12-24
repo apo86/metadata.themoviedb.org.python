@@ -49,10 +49,9 @@ class TMDBMovieScraper(object):
                 bests = [item for item in result if is_best(item) and item.get('popularity',0) > 5]
                 if bests:
                     break
-                else:
-                    response = tmdbapi.search_movie(query=title, year=year, language=self.language, page=page)
-                    if not 'error' in response:
-                        result += response['results']
+                response = tmdbapi.search_movie(query=title, year=year, language=self.language, page=page)
+                if not 'error' in response:
+                    result += response['results']
         urls = self.urls
 
         if result:
